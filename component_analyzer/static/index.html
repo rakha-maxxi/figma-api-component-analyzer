@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>MAI Component Refactor Analyzer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/styles.css">
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-mark">MAI</div>
+          <div>
+            <strong>Component Analyzer</strong>
+            <span>Refactor intelligence</span>
+          </div>
+        </div>
+
+        <section class="history">
+          <div class="history-head">
+            <h2>Recent Runs</h2>
+            <button id="refresh-history" class="link-button">Refresh</button>
+          </div>
+          <div id="history-list" class="history-list"></div>
+        </section>
+      </aside>
+
+      <main class="main">
+        <header class="hero">
+          <div>
+            <p class="eyebrow">MAI Ops</p>
+            <h1>Figma Component Refactor Analyzer</h1>
+            <p class="hero-copy">
+              Audit component usage, large reusable blocks, native rebuilds, and refactor opportunities from Figma files.
+            </p>
+          </div>
+          <div class="hero-actions">
+            <button id="open-analyze" class="primary-button">Analyze File</button>
+            <button id="load-demo" class="secondary-button">Load Demo</button>
+          </div>
+        </header>
+
+        <section id="empty-state" class="band empty-state">
+          <h2>No analysis loaded yet</h2>
+          <p>Start with a live Figma file or open the demo payload to verify the analyzer flow.</p>
+          <button id="empty-analyze" class="primary-button" type="button">Analyze File</button>
+        </section>
+
+        <section id="analysis-view" class="analysis-view is-hidden">
+          <section class="band meta-band">
+            <div>
+              <p class="eyebrow">Current Analysis</p>
+              <h2 id="meta-title">File Name</h2>
+              <p id="meta-subtitle" class="meta-subtitle"></p>
+            </div>
+            <div class="meta-actions">
+              <label class="focus-filter" for="findings-focus">
+                <span>Focus</span>
+                <select id="findings-focus" class="focus-select">
+                  <option value="all">All Findings</option>
+                  <option value="text_pairing">Text Pairing</option>
+                  <option value="component_candidates">Component / Native Frame Candidates</option>
+                  <option value="scaffold_shell">Scaffold & Shell Patterns</option>
+                  <option value="large_components">Large Components</option>
+                  <option value="existing_not_reused">Existing Component Not Reused</option>
+                  <option value="repeated_patterns">Repeated Native Patterns</option>
+                </select>
+              </label>
+              <button id="reload-current" class="secondary-button">Reload</button>
+            </div>
+          </section>
+
+          <section class="band metrics-band">
+            <div class="section-head">
+              <h2>Evidence Metrics</h2>
+              <p>Use these numbers to decide whether the file needs reuse cleanup, decomposition, or promotion review.</p>
+            </div>
+            <div id="metrics-grid" class="metrics-grid"></div>
+          </section>
+
+          <section class="band tabs-band">
+            <nav class="nav in-content-nav" role="tablist" aria-label="Analyzer sections">
+              <button class="nav-item is-active" data-view="overview" role="tab" aria-selected="true" aria-controls="panel-overview">
+                <span>Snapshot</span>
+                <small>Start here</small>
+              </button>
+              <button class="nav-item" data-view="large" role="tab" aria-selected="false" aria-controls="panel-large">
+                <span>Findings: Large Components</span>
+                <small>Too big to reuse safely</small>
+              </button>
+              <button class="nav-item" data-view="candidates" role="tab" aria-selected="false" aria-controls="panel-candidates">
+                <span>Findings: Reuse Gaps</span>
+                <small>Native, duplicate, or missing reuse</small>
+              </button>
+              <button class="nav-item" data-view="recommendations" role="tab" aria-selected="false" aria-controls="panel-recommendations">
+                <span>Action Plan</span>
+                <small>What to solve next</small>
+              </button>
+            </nav>
+          </section>
+
+          <section id="panel-overview" class="band tab-panel" data-panel="overview" role="tabpanel">
+            <div class="section-head">
+              <h2>Snapshot</h2>
+              <p>Start here for the quick story: what needs attention, plus which components are already being used as instances.</p>
+            </div>
+            <div id="recommendation-strip" class="recommendation-strip"></div>
+            <div class="section-subhead">
+              <h3>Component Source Usage</h3>
+            </div>
+            <div id="component-source-list" class="stack-list compact-list"></div>
+          </section>
+
+          <section id="panel-large" class="band tab-panel panel-hidden" data-panel="large" role="tabpanel" aria-hidden="true">
+            <div class="section-head">
+              <h2>Findings: Large Components</h2>
+              <p>Read this tab to find components that are too large, section-like, or template-like and may need decomposition.</p>
+            </div>
+            <div id="large-components" class="stack-list"></div>
+          </section>
+
+          <section id="panel-candidates" class="band tab-panel panel-hidden" data-panel="candidates" role="tabpanel" aria-hidden="true">
+            <div class="section-head">
+              <h2>Findings: Reuse Gaps</h2>
+              <p>Read this tab to inspect repeated native structures, missing component reuse, raw duplicates, and low-value noise.</p>
+            </div>
+            <div class="table-toolbar">
+              <button class="chip is-active" data-candidate-filter="promotion">Promotion Ready</button>
+              <button class="chip" data-candidate-filter="existing">Existing Component Not Reused</button>
+              <button class="chip" data-candidate-filter="raw">Raw Duplicates</button>
+              <button class="chip" data-candidate-filter="low">Low Value</button>
+            </div>
+            <div id="candidate-list" class="stack-list"></div>
+          </section>
+
+          <section id="panel-recommendations" class="band tab-panel panel-hidden" data-panel="recommendations" role="tabpanel" aria-hidden="true">
+            <div class="section-head">
+              <h2>Action Plan</h2>
+              <p>Use this tab when you want the prioritized recommendation list: what to refactor, promote, or ask designers to reuse.</p>
+            </div>
+            <div id="action-feed" class="stack-list"></div>
+          </section>
+        </section>
+      </main>
+    </div>
+
+    <dialog id="analyze-dialog" class="dialog">
+      <form id="analyze-form" method="dialog" class="dialog-form">
+        <div class="dialog-head">
+          <div>
+            <p class="eyebrow">New Analysis</p>
+            <h2>Analyze a Figma file</h2>
+          </div>
+          <button type="button" id="close-dialog" class="icon-button" aria-label="Close">×</button>
+        </div>
+
+        <label>
+          <span>Figma file key</span>
+          <input name="file_key" placeholder="Use demo for local verification" required>
+        </label>
+
+        <label>
+          <span>Deep compare reference file key</span>
+          <input name="reference_file_key" placeholder="Optional and slower: MM+ Master or demo-master">
+          <small>Leave this empty for fast instance-source analysis. Use only when checking detached or rebuilt patterns against a master file.</small>
+        </label>
+
+        <label class="checkbox-row">
+          <input name="enable_reference_compare" type="checkbox">
+          <span>Enable deep compare against reference file</span>
+        </label>
+
+        <label>
+          <span>Figma personal access token</span>
+          <input name="token" type="password" placeholder="Optional if FIGMA_TOKEN is set on server">
+        </label>
+
+        <div class="form-grid">
+          <label>
+            <span>Project name</span>
+            <input name="project_name" placeholder="MM+, FS+, Maxi Rewards">
+          </label>
+          <label>
+            <span>Platform</span>
+            <input name="platform" placeholder="Mobile, Tablet, Web">
+          </label>
+        </div>
+
+        <div class="dialog-actions">
+          <button type="button" id="cancel-dialog" class="secondary-button">Cancel</button>
+          <button id="submit-analysis" type="submit" class="primary-button">Start Analysis</button>
+        </div>
+        <p id="form-status" class="form-status"></p>
+      </form>
+    </dialog>
+
+    <script src="/assets/app.js"></script>
+  </body>
+</html>
