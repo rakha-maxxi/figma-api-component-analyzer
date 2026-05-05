@@ -6,23 +6,42 @@
     <title>MAI Component Refactor Analyzer</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Source+Code+Pro:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/assets/styles.css">
   </head>
   <body>
     <div class="app-shell">
       <aside class="sidebar">
         <div class="brand">
-          <div class="brand-mark">MAI</div>
-          <div>
-            <strong>Component Analyzer</strong>
-            <span>Refactor intelligence</span>
+          <div class="brand-mark" aria-hidden="true">
+            <span></span>
+          </div>
+          <div class="brand-copy">
+            <strong>MAI Component Analyzer</strong>
+            <span>Figma refactor intelligence</span>
+          </div>
+          <div class="system-status">
+            <span class="status-dot"></span>
+            Local API
           </div>
         </div>
 
+        <section class="sidebar-card command-card">
+          <p class="eyebrow">Scan Console</p>
+          <h2>Analyze reusable patterns without touching backend logic.</h2>
+          <p>Use fast instance-source analysis first. Turn on reference compare only when you need deep duplicate evidence.</p>
+          <div class="sidebar-actions">
+            <button id="open-analyze" class="primary-button">Analyze File</button>
+            <button id="load-demo" class="secondary-button">Load Demo</button>
+          </div>
+        </section>
+
         <section class="history">
           <div class="history-head">
-            <h2>Recent Runs</h2>
+            <div>
+              <p class="eyebrow">Workspace</p>
+              <h2>Recent Runs</h2>
+            </div>
             <button id="refresh-history" class="link-button">Refresh</button>
           </div>
           <div id="history-list" class="history-list"></div>
@@ -32,26 +51,38 @@
       <main class="main">
         <header class="hero">
           <div>
-            <p class="eyebrow">MAI Ops</p>
-            <h1>Figma Component Refactor Analyzer</h1>
+            <p class="eyebrow">MAI Ops / Design System Console</p>
+            <h1>Find component debt before it becomes design-system gravity.</h1>
             <p class="hero-copy">
-              Audit component usage, large reusable blocks, native rebuilds, and refactor opportunities from Figma files.
+              Scan Figma files for adoption, large reusable blocks, missing reuse, and practical refactor actions for MAI product teams.
             </p>
           </div>
-          <div class="hero-actions">
-            <button id="open-analyze" class="primary-button">Analyze File</button>
-            <button id="load-demo" class="secondary-button">Load Demo</button>
+          <div class="hero-panel" aria-label="Analyzer scope">
+            <div>
+              <span class="console-label">MODE</span>
+              <strong>Instance-first</strong>
+              <small>Fast source detection</small>
+            </div>
+            <div>
+              <span class="console-label">OUTPUT</span>
+              <strong>Refactor map</strong>
+              <small>Findings + action plan</small>
+            </div>
           </div>
         </header>
 
         <section id="empty-state" class="band empty-state">
+          <div class="empty-orb" aria-hidden="true"></div>
+          <p class="eyebrow">Waiting for scan</p>
           <h2>No analysis loaded yet</h2>
           <p>Start with a live Figma file or open the demo payload to verify the analyzer flow.</p>
-          <button id="empty-analyze" class="primary-button" type="button">Analyze File</button>
+          <div class="empty-actions">
+            <button id="empty-analyze" class="primary-button" type="button">Analyze File</button>
+          </div>
         </section>
 
         <section id="analysis-view" class="analysis-view is-hidden">
-          <section class="band meta-band">
+          <section class="band meta-band command-bar">
             <div>
               <p class="eyebrow">Current Analysis</p>
               <h2 id="meta-title">File Name</h2>
@@ -76,7 +107,10 @@
 
           <section class="band metrics-band">
             <div class="section-head">
-              <h2>Evidence Metrics</h2>
+              <div>
+                <p class="eyebrow">Evidence Layer</p>
+                <h2>Metrics that explain the refactor pressure</h2>
+              </div>
               <p>Use these numbers to decide whether the file needs reuse cleanup, decomposition, or promotion review.</p>
             </div>
             <div id="metrics-grid" class="metrics-grid"></div>
@@ -85,28 +119,31 @@
           <section class="band tabs-band">
             <nav class="nav in-content-nav" role="tablist" aria-label="Analyzer sections">
               <button class="nav-item is-active" data-view="overview" role="tab" aria-selected="true" aria-controls="panel-overview">
-                <span>Snapshot</span>
-                <small>Start here</small>
+                <span>01 Snapshot</span>
+                <small>Read the story first</small>
               </button>
               <button class="nav-item" data-view="large" role="tab" aria-selected="false" aria-controls="panel-large">
-                <span>Findings: Large Components</span>
-                <small>Too big to reuse safely</small>
+                <span>02 Large Components</span>
+                <small>Decompose candidates</small>
               </button>
               <button class="nav-item" data-view="candidates" role="tab" aria-selected="false" aria-controls="panel-candidates">
-                <span>Findings: Reuse Gaps</span>
-                <small>Native, duplicate, or missing reuse</small>
+                <span>03 Reuse Gaps</span>
+                <small>Native and duplicate patterns</small>
               </button>
               <button class="nav-item" data-view="recommendations" role="tab" aria-selected="false" aria-controls="panel-recommendations">
-                <span>Action Plan</span>
-                <small>What to solve next</small>
+                <span>04 Action Plan</span>
+                <small>Prioritized next moves</small>
               </button>
             </nav>
           </section>
 
           <section id="panel-overview" class="band tab-panel" data-panel="overview" role="tabpanel">
             <div class="section-head">
-              <h2>Snapshot</h2>
-              <p>Start here for the quick story: what needs attention, plus which components are already being used as instances.</p>
+              <div>
+                <p class="eyebrow">Snapshot</p>
+                <h2>Start here for the quick story</h2>
+              </div>
+              <p>What needs attention, plus which components are already being used as instances.</p>
             </div>
             <div id="recommendation-strip" class="recommendation-strip"></div>
             <div class="section-subhead">
@@ -117,16 +154,22 @@
 
           <section id="panel-large" class="band tab-panel panel-hidden" data-panel="large" role="tabpanel" aria-hidden="true">
             <div class="section-head">
-              <h2>Findings: Large Components</h2>
-              <p>Read this tab to find components that are too large, section-like, or template-like and may need decomposition.</p>
+              <div>
+                <p class="eyebrow">Findings</p>
+                <h2>Large Components</h2>
+              </div>
+              <p>Components that are too large, section-like, or template-like and may need decomposition.</p>
             </div>
             <div id="large-components" class="stack-list"></div>
           </section>
 
           <section id="panel-candidates" class="band tab-panel panel-hidden" data-panel="candidates" role="tabpanel" aria-hidden="true">
             <div class="section-head">
-              <h2>Findings: Reuse Gaps</h2>
-              <p>Read this tab to inspect repeated native structures, missing component reuse, raw duplicates, and low-value noise.</p>
+              <div>
+                <p class="eyebrow">Findings</p>
+                <h2>Reuse Gaps</h2>
+              </div>
+              <p>Repeated native structures, missing component reuse, raw duplicates, and low-value noise.</p>
             </div>
             <div class="table-toolbar">
               <button class="chip is-active" data-candidate-filter="promotion">Promotion Ready</button>
@@ -139,8 +182,11 @@
 
           <section id="panel-recommendations" class="band tab-panel panel-hidden" data-panel="recommendations" role="tabpanel" aria-hidden="true">
             <div class="section-head">
-              <h2>Action Plan</h2>
-              <p>Use this tab when you want the prioritized recommendation list: what to refactor, promote, or ask designers to reuse.</p>
+              <div>
+                <p class="eyebrow">Recommendation Layer</p>
+                <h2>Action Plan</h2>
+              </div>
+              <p>Prioritized recommendations: what to refactor, promote, or ask designers to reuse.</p>
             </div>
             <div id="action-feed" class="stack-list"></div>
           </section>
